@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
+
+  <ScrollView
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      >
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingLeft="20dp"
+          android:paddingTop="10dp"
+          android:background="#eaffff">
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Call Reminder"
+              android:textSize="26sp"
+              android:textAlignment="center"
+              android:layout_gravity=""
+              android:textColor="#020220"
+              android:id="@+id/textView2" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="In Battery Efficient Implementation\n\nFav contacts"
+              android:id="@+id/textView3"
+              />
+          <TextView
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:scrollbars = "vertical"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="Fav contacts here"
+              android:id="@+id/textView"
+              />
+          <Chronometer
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:id="@+id/chronometer"/>
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="Add Contact"
+              android:id="@+id/textView4"
+              android:layout_marginTop="20dp"
+              android:textColor="#454554" />
+
+
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="Name"
+              android:id="@+id/textView5"
+              android:textColor="#454554"
+              />
+
+          <EditText
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:inputType="textPersonName"
+              android:hint="Name"
+              android:focusableInTouchMode="true"
+              android:ems="10"
+              android:backgroundTint="#b0e2ff"
+              android:id="@+id/editText"
+              />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="phone number\n(just a substring)"
+              android:id="@+id/textView6"
+              android:textColor="#454554"
+              />
+          <EditText
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:inputType="number"
+              android:backgroundTint="#b0e2ff"
+              android:ems="10"
+              android:hint="eg:type '71205' or '929647' for 9296471205"
+              android:id="@+id/editText2"
+              />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:text="Reminder in Hrs"
+              android:id="@+id/textView7"
+              android:textColor="#454554"
+              />
+          <EditText
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:inputType="number"
+              android:ems="10"
+              android:backgroundTint="#b0e2ff"
+              android:hint="Remind if it exeeds 'x' hrs"
+              android:id="@+id/editText3"
+              />
+
+          <Button
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Add"
+              android:id="@+id/button2"
+              />
+          <Button
+              style="?android:attr/buttonStyleSmall"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Start Broadcasting"
+              android:id="@+id/button"
+              />
+
+          <TextView
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:text="Remove"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="a substring  in name"/>
+
+          <EditText
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:backgroundTint="#b0e2ff"
+              android:hint="enter 'kalyan' or 'gk' for gkalyan"
+              android:id="@+id/editText4"/>
+
+          <Button
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Remove"
+              android:id="@+id/button3"/>
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="SET INTERVAL"/>
+          <EditText
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/editText5"
+              android:hint="3600"
+              />
+          <Button
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="set interval in secs"
+              android:id="@+id/button4"/>
+
+
+
+      </LinearLayout>
+  </ScrollView>
+
+</LinearLayout>
