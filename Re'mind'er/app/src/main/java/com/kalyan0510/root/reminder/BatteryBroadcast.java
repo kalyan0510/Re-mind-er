@@ -182,11 +182,6 @@ public class BatteryBroadcast extends BroadcastReceiver {
     }
     void savecontacts(){
         ArrayList<person> pl = new ArrayList<person>();
-        pl.add(new person("9441110966","Bajje",12));
-        pl.add(new person("9490573955","Daddy",12));
-        pl.add(new person("9294104084","Baby",18));
-        pl.add(new person("9494155150","Lally",12));
-        pl.add(new person("9441146684","USHA",72));
 
         for(person p: pl){
             ParseObject obj = new ParseObject("contacts");
