@@ -174,6 +174,26 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
         }
         return str;
     }
+<<<<<<< HEAD
+=======
+    void savecontacts(){
+        ArrayList<person> pl = new ArrayList<person>();
+     
+
+        for(person p: pl){
+            ParseObject obj = new ParseObject("contacts");
+            obj.put("p",p.number);
+            obj.put("n",p.name);
+            obj.put("d",p.hours);
+            obj.pinInBackground();
+        }
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+>>>>>>> origin/master
 
 
     private void getCallDetails(Context context) {

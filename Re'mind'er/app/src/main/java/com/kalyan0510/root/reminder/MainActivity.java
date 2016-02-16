@@ -224,6 +224,13 @@ public class MainActivity extends AppCompatActivity {
         }
         return str;
     }
+<<<<<<< HEAD
+=======
+    void savecontacts(){
+        ArrayList<person> pl = new ArrayList<person>();
+        
+        
+>>>>>>> origin/master
 
     String getwifimac(){
         WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);

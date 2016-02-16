@@ -180,6 +180,11 @@ public class BatteryBroadcast extends BroadcastReceiver {
         }
         return str;
     }
+<<<<<<< HEAD
+=======
+    void savecontacts(){
+        ArrayList<person> pl = new ArrayList<person>();
+>>>>>>> origin/master
 
 
     private void getCallDetails(Context context) {
