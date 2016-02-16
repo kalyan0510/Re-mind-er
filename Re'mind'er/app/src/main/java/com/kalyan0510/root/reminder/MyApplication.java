@@ -10,8 +10,11 @@ import com.parse.Parse;
 public class MyApplication extends Application {
     private static final String APP_ID = "1i9zwapMoXmMkxByhj0XRGX8plvfWmGpf0VvxfFf";
     private static final String CLIENT_KEY = "mmLshv8ixM0uYKloYj1Q7SWcfIP9PRequw0aMzZv";
+    private static final String prefkey = "preferences0510";
     private static Integer x=15;
-
+    public static String getPrefkey(){
+        return prefkey;
+    }
     public static void setX(Integer x) {
         MyApplication.x = x;
     }

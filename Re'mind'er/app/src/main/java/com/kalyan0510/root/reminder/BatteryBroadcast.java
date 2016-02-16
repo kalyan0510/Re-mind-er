@@ -180,40 +180,17 @@ public class BatteryBroadcast extends BroadcastReceiver {
         }
         return str;
     }
-    void savecontacts(){
-        ArrayList<person> pl = new ArrayList<person>();
-        pl.add(new person("9441110966","Bajje",12));
-        pl.add(new person("9490573955","Daddy",12));
-        pl.add(new person("9294104084","Baby",18));
-        pl.add(new person("9494155150","Lally",12));
-        pl.add(new person("9441146684","USHA",72));
 
-        for(person p: pl){
-            ParseObject obj = new ParseObject("contacts");
-            obj.put("p",p.number);
-            obj.put("n",p.name);
-            obj.put("d",p.hours);
-            obj.pinInBackground();
-        }
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private String getCallDetails(Context context) {
-
-        StringBuffer sb = new StringBuffer();
+    private void getCallDetails(Context context) {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            return "Permission Denied";
+            return ;
         }
         Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
         int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
         int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
         int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
-        sb.append("Call Details :");
 
         while ( managedCursor.moveToNext() ) {
             String phNumber = managedCursor.getString( number );
@@ -221,27 +198,14 @@ public class BatteryBroadcast extends BroadcastReceiver {
             String callDate = managedCursor.getString( date );
             Date callDayTime = new Date(Long.valueOf(callDate));
             String callDuration = managedCursor.getString( duration );
-            String dir = null;
-            int dircode = Integer.parseInt( callType );
-            sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
-
             Date now = new Date();
             long diff  = now.getTime() - callDayTime.getTime();
-
-            long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diff);
             long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diff);
             long diffInHours = TimeUnit.MILLISECONDS.toHours(diff);
-
-
-            sb.append("\n Hours: "+diffInHours+" Minutes: "+diffInMinutes%60+"    list size-"+list.size());
-
-
-            //Here
             person rem=null;
             for(person x:list){
                 if(phNumber.contains(x.number)&&Integer.parseInt(callDuration)>15){
                     rem = x;
-                    sb.append("\n " + x.name + " REMOVED | REMOVED | REMOVED | REMOVED | REMOVED | REMOVED \n");
                     if(diffInHours>x.hours)
                     result.add(new res(phNumber, x.name, (int) diffInHours, (int) (diffInMinutes % 60)));
                     break;
@@ -250,21 +214,18 @@ public class BatteryBroadcast extends BroadcastReceiver {
             if(rem!=null)
                 list.remove(rem);
 
-            sb.append("\n----------------------------------");
             if(list.isEmpty())
                 break;
 
 
         }
         for(person x:list){
-
-                sb.append("\n " + x.name + " REMOVED | REMOVED | REMOVED | REMOVED | REMOVED | REMOVED \n");
                 result.add(new res(x.number, x.name, (int)99999, (int) (59 % 60)));
 
 
         }
 
         managedCursor.close();
-        return sb.toString()+"\nEnd";
+        return ;
     }
 }

@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -53,19 +54,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
-   /* BroadcastReceiver broadcaast = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-            mBuilder.setSmallIcon(R.mipmap.kalyan);
-            mBuilder.setContentTitle("hello GK");
-            mBuilder.setContentText("heres ur details");
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(18456, mBuilder.build());
-            System.out.println("RECIEVER CALLED\nRECIEVER CALLED\nRECIEVER CALLED\nRECIEVER CALLED\nRECIEVER CALLED\nRECIEVER CALLED\nRECIEVER CALLED\n");
-        }
-    };*/
     class res{
        String phone;
        String name;
@@ -98,17 +86,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         hidekey();
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list= new ArrayList<person>();
         result = new ArrayList<res>();
-        //Toast.makeText(MainActivity.this, getwifimac(), Toast.LENGTH_SHORT).show();
-        //savecontacts();
-
         chronometer = (Chronometer)findViewById(R.id.chronometer);
         String str="";
         str+=loadcontacts();
+        et_name=(EditText)findViewById(R.id.editText);
+        et_num=(EditText)findViewById(R.id.editText2);
+        et_inv=(EditText)findViewById(R.id.editText3);
+        et_rem = (EditText) findViewById(R.id.editText4);
+        et_int=((EditText)findViewById(R.id.editText5));
+        ((TextView)findViewById(R.id.intcur)).setText("SET INTERVAL: current->"+getSharedPreferences(MyApplication.getPrefkey(),Context.MODE_PRIVATE).getInt("interval", 3600)+"secs");
+        ((TextView)findViewById(R.id.textView)).setText(str);
+        ((TextView)findViewById(R.id.textView)).setMovementMethod(new ScrollingMovementMethod());
         Button but = (Button)findViewById(R.id.button);
         but.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,56 +108,38 @@ public class MainActivity extends AppCompatActivity {
 
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometer.start();
-
-                //10 seconds later
                 Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.SECOND, 10);
+                cal.add(Calendar.SECOND, 1);
 
                 Intent intent = new Intent(getBaseContext(), RecursiveReceiver.class);
-
-                //intent.putExtra("bc", new xcontext(getBaseContext()));
-                //intent.putExtra("c",new xcontext(getApplicationContext()));
                 PendingIntent pendingIntent =
                         PendingIntent.getBroadcast(getBaseContext(),
                                 1, intent, PendingIntent.FLAG_ONE_SHOT);
                 AlarmManager alarmManager =
-                        (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-
-
-                    if(Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-                    {
-                        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                                cal.getTimeInMillis(), pendingIntent);
-                        Toast.makeText(getBaseContext(),
-                                "Broadcast Started",
-                                Toast.LENGTH_LONG).show();
-                    }else{
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP,
-                                cal.getTimeInMillis(), pendingIntent);
-                        /*Toast.makeText(getBaseContext(),
-                                "call alarmManager.setExact()",
-                                Toast.LENGTH_LONG).show();*/
-                    }
+                        (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    alarmManager.set(AlarmManager.RTC_WAKEUP,
+                            cal.getTimeInMillis(), pendingIntent);
+                    Toast.makeText(getBaseContext(),
+                            "Broadcast Started",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP,
+                            cal.getTimeInMillis(), pendingIntent);
                 }
+            }
 
 
         });
         Button but2 = (Button)findViewById(R.id.button2);
-        et_name=(EditText)findViewById(R.id.editText);
-        et_num=(EditText)findViewById(R.id.editText2);
-        et_inv=(EditText)findViewById(R.id.editText3);
-        et_rem = (EditText) findViewById(R.id.editText4);
-        et_int=((EditText)findViewById(R.id.editText5));
-        et_name.getBackground().mutate().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
         but2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(et_num.getText().toString().trim().equals("")||et_inv.getText().toString().trim().equals("")||et_name.getText().toString().trim().equals(""))
-                {
+                if (et_num.getText().toString().trim().equals("") || et_inv.getText().toString().trim().equals("") || et_name.getText().toString().trim().equals("")) {
                     Toast.makeText(MainActivity.this, "Empty Values", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                    ParseObject obj = new ParseObject("contacts");
+                ParseObject obj = new ParseObject("contacts");
                 obj.put("p", et_num.getText().toString().trim());
                 et_num.setText("");
                 obj.put("n", et_name.getText().toString().trim());
@@ -174,12 +148,12 @@ public class MainActivity extends AppCompatActivity {
                 et_inv.setText("");
                 try {
                     obj.pin();
-                    Toast.makeText(MainActivity.this, "Saved Successfully " + obj.getString("p") + obj.getString("n") + obj.getInt("d") + obj.getString("d"), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Saved Successfully " + obj.getString("p"), Toast.LENGTH_SHORT).show();
                 } catch (ParseException e) {
                     Toast.makeText(MainActivity.this, "Parse Error in Saving", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
-                ((TextView)findViewById(R.id.textView)).setText(loadcontacts());
+                ((TextView) findViewById(R.id.textView)).setText(loadcontacts());
             }
         });
         ((Button)findViewById(R.id.button3)).setOnClickListener(new View.OnClickListener() {
@@ -212,71 +186,23 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-
         ((Button)findViewById(R.id.button4)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!et_int.getText().toString().trim().equals(""))
-                {
-                    /*try {
+                if (!et_int.getText().toString().trim().equals("")) {
+                    SharedPreferences sp = getSharedPreferences(MyApplication.getPrefkey(), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt("interval", Integer.parseInt(et_int.getText().toString().trim()));
+                    editor.commit();
 
-                        ParseQuery<ParseObject> q = ParseQuery.getQuery("interval");
-                        q.fromLocalDatastore();
-                        ParseObject.unpinAll(q.find());
-                        ParseObject po=new ParseObject("interval");
-                        po.put("int",Integer.parseInt(et_int.getText().toString().trim()));
-                        po.pin();
-                        Toast.makeText(MainActivity.this, "Interval successfuly set to "+po.getInt("int")+"secs", Toast.LENGTH_SHORT).show();
-
-                    }
-                    catch (NumberFormatException nb){
-                        Toast.makeText(MainActivity.this, "Please enter Valid number", Toast.LENGTH_SHORT).show();
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        ParseObject ob = new ParseObject("interval");
-                        ob. put("int",15);
-                        try {
-                            ob.pin();
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                    }*/
-                    ((MyApplication)getApplication()).setX(Integer.parseInt(et_int.getText().toString().trim()));
                 }
-                   /* try {
-                        ParseQuery<ParseObject> q = ParseQuery.getQuery("interval");
-                        q.fromLocalDatastore();
-                        ParseObject po= q.getFirst();*/
-                        Toast.makeText(MainActivity.this, "Interval "+ ((MyApplication)getApplication()).getX()+"secs", Toast.LENGTH_SHORT).show();
-                   /* }catch (ParseException e) {
-                        e.printStackTrace();
-                        ParseObject ob = new ParseObject("interval");
-                        ob. put("int", 15);
-                        try {
-                            ob.pin();
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                    }*/
-
-
-
+                Toast.makeText(MainActivity.this, "Interval " + getSharedPreferences(MyApplication.getPrefkey(), Context.MODE_PRIVATE).getInt("interval", 3600) + "secs", Toast.LENGTH_SHORT).show();
 
 
             }
         });
 
-        //str+= getCallDetails();
-        ((TextView)findViewById(R.id.textView)).setText(str);
-        ((TextView)findViewById(R.id.textView)).setMovementMethod(new ScrollingMovementMethod());
-       // String x="";
-       /* for(res r:result){
-            x+=r.name+"  "+r.phone+" "+r.H+" "+r.m+"\n";
-        }*/
-        //((TextView)findViewById(R.id.textView)).setText(x+"\n"+str);
+
     }
     String loadcontacts(){
         list.clear();
@@ -298,27 +224,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return str;
     }
-    void savecontacts(){
-        ArrayList<person> pl = new ArrayList<person>();
-        pl.add(new person("9441110966","Bajje",12));
-        pl.add(new person("9490573955","Daddy",12));
-        pl.add(new person("9294104084","Baby",18));
-        pl.add(new person("9494155150", "Lally", 12));
-        pl.add(new person("9441146684", "USHA", 72));
 
-        for(person p: pl){
-            ParseObject obj = new ParseObject("contacts");
-            obj.put("p",p.number);
-            obj.put("n",p.name);
-            obj.put("d",p.hours);
-            obj.pinInBackground();
-        }
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
     String getwifimac(){
         WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -327,62 +233,7 @@ public class MainActivity extends AppCompatActivity {
         else return wm.getConnectionInfo().getBSSID()+"  "+wm.getConnectionInfo().getLinkSpeed();
     }
 
-    private void getCallDetails() {
 
-        //StringBuffer sb = new StringBuffer();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            return ;
-        }
-        Cursor managedCursor = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
-                 int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
-                 int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
-                 int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
-                 int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
-                // sb.append("Call Details :");
-
-                 while ( managedCursor.moveToNext() ) {
-                     String phNumber = managedCursor.getString( number );
-                     String callType = managedCursor.getString( type );
-                     String callDate = managedCursor.getString( date );
-                     Date callDayTime = new Date(Long.valueOf(callDate));
-                     String callDuration = managedCursor.getString( duration );
-                     String dir = null;
-                     int dircode = Integer.parseInt( callType );
-                    // sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
-
-                     Date now = new Date();
-                     long diff  = now.getTime() - callDayTime.getTime();
-
-                     long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diff);
-                     long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-                     long diffInHours = TimeUnit.MILLISECONDS.toHours(diff);
-
-
-                    // sb.append("\n Hours: "+diffInHours+" Minutes: "+diffInMinutes%60+"    list size-"+list.size());
-
-
-                     //Here
-                     person rem=null;
-                     for(person x:list){
-                         if(phNumber.contains(x.number)&&Integer.parseInt(callDuration)>15){
-                             rem=x;
-                            // sb.append("\n "+x.name+" REMOVED | REMOVED | REMOVED | REMOVED | REMOVED | REMOVED \n");
-                             result.add(new res(phNumber, x.name, (int) diffInHours, (int) (diffInMinutes % 60)));
-                             break;
-                         }
-                     }
-                     if(rem!=null)
-                         list.remove(rem);
-
-                    // sb.append("\n----------------------------------");
-                     if(list.isEmpty())
-                         break;
-
-
-                 }
-                 managedCursor.close();
-                    return;
-             }
 
 
 }

@@ -67,7 +67,6 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         WakeLocker.acquire(context);
-
         list = new ArrayList<person>();
         result = new ArrayList<res>();
         loadcontacts(context);
@@ -77,14 +76,9 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
             setcall(context, x.name, x.H, x.m, ++n, x.phone);
         }
         result.clear();
-        loadcontacts(context);
-
         recursiveBroadcast(context);
         WakeLocker.release();
     }
-
-
-
     public Bitmap getbitmapfromnum(String num,Context context) {
         String contactID = null;
 
@@ -102,8 +96,7 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
 
         if(cursor!=null) {
             while(cursor.moveToNext()){
-                String contactName = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup.DISPLAY_NAME));
-                contactID = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
+               contactID = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.PhoneLookup._ID));
 
             }
             cursor.close();
@@ -122,8 +115,6 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
                 }else{
                     return null;
                 }
-
-               // assert inputStream != null;
                 inputStream.close();
 
             } catch (IOException e) {
@@ -148,7 +139,7 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
 
         String  ch="";
         if(h==75369)
-            ch="been " +DecimalFormatSymbols.getInstance().getInfinity()  + " hours " + 59 + " minutes";
+            ch="been " +DecimalFormatSymbols.getInstance().getInfinity()  + " hours as I know" ;
         else
             ch="been " +h + " hours " + m + " minutes";
 
@@ -163,7 +154,7 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
         int NOTIFICATION_ID = 100+id;
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
-    String loadcontacts(Context context){
+    public String loadcontacts(Context context){
         list.clear();
         ParseQuery<ParseObject> query = ParseQuery.getQuery("contacts");
         query.fromLocalDatastore();
@@ -183,40 +174,18 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
         }
         return str;
     }
-    void savecontacts(){
-        ArrayList<person> pl = new ArrayList<person>();
-        pl.add(new person("9441110966","Bajje",12));
-        pl.add(new person("9490573955","Daddy",12));
-        pl.add(new person("9294104084","Baby",18));
-        pl.add(new person("9494155150","Lally",12));
-        pl.add(new person("9441146684","USHA",72));
 
-        for(person p: pl){
-            ParseObject obj = new ParseObject("contacts");
-            obj.put("p",p.number);
-            obj.put("n",p.name);
-            obj.put("d",p.hours);
-            obj.pinInBackground();
-        }
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private String getCallDetails(Context context) {
+    private void getCallDetails(Context context) {
         result.clear();
-        StringBuffer sb = new StringBuffer();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            return "Permission Denied";
+            return ;
         }
         Cursor managedCursor = context.getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
         int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
         int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
         int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
         int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
-        sb.append("Call Details :");
 
         while ( managedCursor.moveToNext() ) {
             String phNumber = managedCursor.getString( number );
@@ -226,20 +195,12 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
             String callDuration = managedCursor.getString( duration );
             String dir = null;
             int dircode = Integer.parseInt( callType );
-            sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
-
             Date now = new Date();
             long diff  = now.getTime() - callDayTime.getTime();
 
             long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(diff);
             long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diff);
             long diffInHours = TimeUnit.MILLISECONDS.toHours(diff);
-
-
-            sb.append("\n Hours: " + diffInHours + " Minutes: " + diffInMinutes % 60 + "    list size-"+list.size());
-
-
-            //Here
             person rem=null;
             for(person x:list){
                 if(phNumber.contains(x.number)&&Integer.parseInt(callDuration)>15){
@@ -247,7 +208,6 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
 
                     if(diffInHours >= x.hours)
                     {
-                        //Toast.makeText(context, diffInHours+" >= "+x.hours, Toast.LENGTH_SHORT).show();
                         result.add(new res(phNumber, x.name, (int) diffInHours, (int) (diffInMinutes % 60)));
                     }
                     break;
@@ -255,8 +215,6 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
             }
             if(rem!=null)
                 list.remove(rem);
-
-            sb.append("\n----------------------------------");
             if(list.isEmpty())
                 break;
 
@@ -270,29 +228,16 @@ public class RecursiveReceiver extends WakefulBroadcastReceiver {
         }
 
         managedCursor.close();
-        return sb.toString()+"\nEnd";
+        return ;
     }
     void recursiveBroadcast(Context context){
-        //Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
         Context bc = context;
         Context c = context;
-
-
-        //10 seconds later
         int interval=15;
-       /* try {
-            ParseQuery<ParseObject> q = ParseQuery.getQuery("interval");
-            q.fromLocalDatastore();
-            ParseObject po= q.getFirst();
-            interval= Integer.parseInt(po.getString("int"));
-            //Toast.makeText(.this, ""+po.getString("int")+"secs", Toast.LENGTH_SHORT).show();
-        }catch (ParseException e) {
-            e.printStackTrace();
-        }*/
-        interval= ((MyApplication)context.getApplicationContext()).getX();
+        interval=context.getSharedPreferences(MyApplication.getPrefkey(), Context.MODE_PRIVATE).getInt("interval",3600);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, interval);
-        Toast.makeText(context, "set after "+interval+ "secs", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "Next reminder after "+interval+ "secs", Toast.LENGTH_SHORT).show();
         Intent xtent = new Intent(bc, RecursiveReceiver.class);
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(bc,
